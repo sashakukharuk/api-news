@@ -36,13 +36,20 @@ paths:
         "200":
           description: Successful logout
 
-  /api/user-profile:
+  /api/user:
     get:
       summary: Get user profile
       tags:
         - User
       security:
         - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: News page number
+          schema:
+            type: integer
       responses:
         "200":
           description: User profile
@@ -52,6 +59,50 @@ paths:
                 $ref: "#/components/schemas/UserProfile"
         "401":
           description: Unauthorized
+
+  /api/news:
+    get:
+      summary: Get all news
+      tags:
+        - News
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: News page number
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of all news
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/News"
+
+  /api/news/{id}:
+    get:
+      summary: Get a specific news article
+      tags:
+        - News
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: News ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: News details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/News"
+        "404":
+          description: News not found
 
 components:
   securitySchemes:
@@ -71,11 +122,11 @@ components:
         email:
           type: string
           format: email
-          example: user@example.com
+          example: test@example.com
         password:
           type: string
           format: password
-          example: password123
+          example: 123456
         device_name:
           type: string
           example: device_name
@@ -99,3 +150,22 @@ components:
         email:
           type: string
           example: john@example.com
+
+    News:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: News Title
+        description:
+          type: string
+          example: News Description
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
