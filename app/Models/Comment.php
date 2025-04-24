@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Broadcasting\BroadcastableModelEventOccurred;
+use App\Http\Resources\CommentResource;
 
 class Comment extends Model
 {
@@ -24,5 +27,24 @@ class Comment extends Model
     public function scopeFilter($query, $filters)
     {
         return $filters->apply($query);
+    }
+
+    public function broadcastOn(string $event)
+    {
+        return [ 
+            new PrivateChannel('news.'.$this->news_id)
+        ];
+    }
+
+    public function broadcastWith()
+    {       
+        return CommentResource::make($this)->resolve();
+    }
+
+    protected function newBroadcastableEvent(string $event): BroadcastableModelEventOccurred
+    {
+        return (new BroadcastableModelEventOccurred(
+            $this, $event
+        ))->dontBroadcastToCurrentUser();
     }
 }
