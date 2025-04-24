@@ -3,20 +3,20 @@
 namespace App\Services;
 
 use App\Models\Comment;
-use App\Models\User;
+use App\Filters\CommentFilter;
 
 class CommentService
 {
     private $limit = 10;
 
-    public function getComments()
+    public function getComments(CommentFilter $filter)
     {
-        return Comment::with('user')->paginate($this->limit);
+        return Comment::with('user')->filter($filter)->paginate($this->limit);
     }
 
     public function getComment($id)
     {
-        return Comment::with(User::class)->find($id);
+        return Comment::with('user')->find($id);
     }
 
     public function storeComment($data)

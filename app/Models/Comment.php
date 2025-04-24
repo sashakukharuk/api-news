@@ -21,4 +21,8 @@ class Comment extends Model
         return $this->belongsTo(User::class);
     }
     
+    public function scopeFilter($query, $filters)
+    {
+        return $filters->apply($query);
+    }
 }

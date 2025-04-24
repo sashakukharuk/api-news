@@ -11,6 +11,7 @@ use App\Http\Resources\Comment\CommentCollection;
 use App\Http\Resources\Comment\CommentResource;
 use App\Services\CommentService;
 use App\Services\NewsService;
+use App\Filters\CommentFilter;
 
 class CommentController extends Controller
 {
@@ -22,9 +23,9 @@ class CommentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(CommentFilter $filter)
     {
-        return CommentCollection::make($this->commentService->getComments());
+        return CommentCollection::make($this->commentService->getComments($filter));
     }
 
     /**
