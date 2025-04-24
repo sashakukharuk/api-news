@@ -11,7 +11,7 @@
   <script>
     window.onload = () => {
       SwaggerUIBundle({
-        url: "/docs/swagger.yaml", // <- тут шлях до твого JSON
+        url: "/docs/swagger.yaml",
         dom_id: "#swagger-ui",
         presets: [
           SwaggerUIBundle.presets.apis
