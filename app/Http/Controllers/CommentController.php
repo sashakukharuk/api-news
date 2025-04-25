@@ -13,6 +13,8 @@ use App\Services\CommentService;
 use App\Services\NewsService;
 use App\Filters\CommentFilter;
 use App\Jobs\SendCommentNotification;
+use App\Events\CommentCreated;
+use Illuminate\Support\Facades\Event;
 
 class CommentController extends Controller
 {
@@ -47,6 +49,8 @@ class CommentController extends Controller
         $comment = $this->commentService->storeComment($data);
 
         SendCommentNotification::dispatch($comment);
+
+        event(new CommentCreated($comment));
 
         return CommentResource::make($comment);
     }
