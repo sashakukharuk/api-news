@@ -12,6 +12,7 @@ use App\Http\Resources\Comment\CommentResource;
 use App\Services\CommentService;
 use App\Services\NewsService;
 use App\Filters\CommentFilter;
+use App\Jobs\SendCommentNotification;
 
 class CommentController extends Controller
 {
@@ -44,6 +45,8 @@ class CommentController extends Controller
         $data['user_id'] = $user_id;
 
         $comment = $this->commentService->storeComment($data);
+
+        SendCommentNotification::dispatch($comment);
 
         return CommentResource::make($comment);
     }

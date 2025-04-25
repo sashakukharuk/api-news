@@ -8,6 +8,8 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\BroadcastableModelEventOccurred;
 use App\Http\Resources\CommentResource;
 use Laravel\Scout\Searchable;
+use App\Models\User;
+use App\Models\News;
 
 class Comment extends Model
 {
@@ -23,6 +25,11 @@ class Comment extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function news()
+    {
+        return $this->belongsTo(News::class);
     }
     
     public function scopeFilter($query, $filters)

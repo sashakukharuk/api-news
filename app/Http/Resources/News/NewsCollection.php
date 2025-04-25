@@ -4,6 +4,7 @@ namespace App\Http\Resources\News;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Http\Resources\UserResource;
 
 class NewsCollection extends ResourceCollection
 {
@@ -21,7 +22,8 @@ class NewsCollection extends ResourceCollection
                     "title" => $news->title,
                     "description" => $news->description,
                     "created_at" => $news->created_at,
-                    "updated_at" => $news->updated_at
+                    "updated_at" => $news->updated_at,
+                    'user' => new UserResource($news->user),
                 ];
             })
         ];
