@@ -21,6 +21,7 @@ class NewsCollection extends ResourceCollection
                     "id" => $news->id,
                     "title" => $news->title,
                     "description" => $news->description,
+                    "is_new" => $news->is_new,
                     "created_at" => $news->created_at,
                     "updated_at" => $news->updated_at,
                     'user' => new UserResource($news->user),

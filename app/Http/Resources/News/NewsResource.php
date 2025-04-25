@@ -19,6 +19,7 @@ class NewsResource extends JsonResource
             "id" => $this->id,
             "title" => $this->title,
             "description" => $this->description,
+            "is_new" => $this->is_new,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
             'user' => new UserResource($this->user),
