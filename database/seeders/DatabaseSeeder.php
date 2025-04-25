@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\News;
+use App\Models\Comment;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -14,12 +16,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
+        $news = News::factory(5)->create();
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        //     'password' => Hash::make('123456'),
-        // ]);
+        $users = User::factory(5)->create();
+
+        foreach ($news as $newsItem) {
+            $commentCount = rand(2, 3);
+            
+            for ($i = 0; $i < $commentCount; $i++) {
+                Comment::factory()->create([
+                    'news_id' => $newsItem->id,
+                    'user_id' => $users->random()->id,
+                ]);
+            }
+        }
     }
 }
