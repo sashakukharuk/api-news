@@ -53,7 +53,7 @@ class CommentFilter
 
     public function body($value)
     {
-        $this->builder->where('body', 'like', "%$value%");
+        $this->builder->whereFullText('body', $value);
     }
 
     public function from_date($value)

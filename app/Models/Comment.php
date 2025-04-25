@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\BroadcastableModelEventOccurred;
 use App\Http\Resources\CommentResource;
+use Laravel\Scout\Searchable;
 
 class Comment extends Model
 {
     /** @use HasFactory<\Database\Factories\CommentFactory> */
-    use HasFactory;
+    use HasFactory, Searchable; 
 
     protected $fillable = [
         'body',
