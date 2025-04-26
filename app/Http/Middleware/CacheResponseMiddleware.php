@@ -16,7 +16,7 @@ class CacheResponseMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $key = 'response_' . md5($request->url());
+        $key = 'response_' . md5($request->url() . '_page_' . $request->query('page', 1));
 
         if (Cache::has($key)) {
             return response(Cache::get($key));
