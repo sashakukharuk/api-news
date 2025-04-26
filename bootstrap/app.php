@@ -5,6 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\LogRequestMiddleware;
 use Illuminate\Support\Facades\Log;
+use App\Http\Middleware\HandleHttpErrors;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(LogRequestMiddleware::class);
+        $middleware->append(HandleHttpErrors::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->report(function (Throwable $e) {

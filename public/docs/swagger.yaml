@@ -25,6 +25,42 @@ paths:
                 $ref: "#/components/schemas/LoginResponse"
         "401":
           description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The provided credentials are incorrect."
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The email field is required. (and 2 more errors)"
+                  errors:
+                    type: object
+                    properties:
+                      email:
+                        type: array
+                        items:
+                          type: string
+                        example: ["The email field is required."]
+                      password:
+                        type: array
+                        items:
+                          type: string
+                        example: ["The password field is required."]
+                      device_name:
+                        type: array
+                        items:
+                          type: string
+                        example: ["The device name field is required."]
   /api/logout:
     post:
       summary: User logout
@@ -35,6 +71,20 @@ paths:
       responses:
         "200":
           description: Successful logout
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Logged out"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
 
   /api/refresh:
     post:
@@ -59,6 +109,10 @@ paths:
                     example: "eyJ0eXAiOiJKV1QiLCJhbGciOi..."
         "401":
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
 
   /api/user:
     get:
@@ -67,13 +121,6 @@ paths:
         - User
       security:
         - bearerAuth: []
-      parameters:
-        - name: page
-          in: query
-          required: false
-          description: News page number
-          schema:
-            type: integer
       responses:
         "200":
           description: User profile
@@ -83,6 +130,10 @@ paths:
                 $ref: "#/components/schemas/UserProfile"
         "401":
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
 
   /api/news:
     get:
@@ -102,9 +153,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/News"
+                $ref: "#/components/schemas/PaginatedNewsResponse"
 
   /api/news/{id}:
     get:
@@ -124,9 +173,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/News"
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/News"
         "404":
           description: News not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundError"
 
   /api/comments:
     get:
@@ -251,11 +307,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Comment"
+                $ref: "#/components/schemas/CommentResponse"
         "401":
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
+        "404":
+          description: News not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundError"
         "422":
           description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
 
   /api/comments/{id}:
     get:
@@ -278,6 +348,10 @@ paths:
                 $ref: "#/components/schemas/Comment"
         "404":
           description: Comment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundError"
     put:
       summary: Update a comment
       tags:
@@ -303,13 +377,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Comment"
+                $ref: "#/components/schemas/CommentResponse"
         "401":
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
+        "403":
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccessDeniedError"
         "404":
           description: Comment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundError"
         "422":
           description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
     delete:
       summary: Delete a comment
       tags:
@@ -326,10 +418,28 @@ paths:
       responses:
         "200":
           description: Comment deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessMessage"
         "401":
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationError"
+        "403":
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccessDeniedError"
         "404":
           description: Comment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundError"
 
 components:
   securitySchemes:
@@ -370,56 +480,81 @@ components:
       properties:
         id:
           type: integer
-          example: 1
+          example: 11
         name:
           type: string
-          example: John Doe
+          example: "Test User"
         email:
           type: string
-          example: john@example.com
+          format: email
+          example: "test@example.com"
+        email_verified_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-04-25T22:08:01.000000Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2025-04-25T22:08:01.000000Z"
 
     News:
       type: object
       properties:
         id:
           type: integer
-          example: 1
+          example: 2
         title:
           type: string
-          example: News Title
+          example: "Ab alias eveniet ut nemo maxime."
         description:
           type: string
-          example: News Description
+          example: "Quidem facilis sunt et earum autem quibusdam nulla. Debitis neque veritatis quaerat itaque qui quasi."
+        is_new:
+          type: integer
+          example: 1
         created_at:
           type: string
           format: date-time
+          example: "2025-04-25T22:00:02.000000Z"
         updated_at:
           type: string
           format: date-time
+          example: "2025-04-25T22:00:02.000000Z"
+        user:
+          $ref: "#/components/schemas/User"
 
     Comment:
       type: object
       properties:
         id:
           type: integer
-          example: 1
-        body:
-          type: string
-          example: "This is a comment"
+          example: 29
         user_id:
           type: integer
-          example: 1
+          example: 11
         news_id:
           type: integer
           example: 1
+        body:
+          type: string
+          example: "This is a new comment"
         created_at:
           type: string
           format: date-time
+          example: "2025-04-26T17:15:24.000000Z"
         updated_at:
           type: string
           format: date-time
+          example: "2025-04-26T17:15:24.000000Z"
         user:
           $ref: "#/components/schemas/User"
+        news:
+          $ref: "#/components/schemas/News"
 
     CommentRequest:
       type: object
@@ -439,11 +574,146 @@ components:
       properties:
         id:
           type: integer
-          example: 1
+          example: 11
         name:
           type: string
-          example: "John Doe"
+          example: "Test User"
         email:
           type: string
           format: email
-          example: "john@example.com"
+          example: "test@example.com"
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-04-25T22:08:01.000000Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2025-04-25T22:08:01.000000Z"
+
+    PaginationLinks:
+      type: object
+      properties:
+        first:
+          type: string
+          example: "http://localhost:8000/api/news?page=1"
+        last:
+          type: string
+          example: "http://localhost:8000/api/news?page=1"
+        prev:
+          type: string
+          nullable: true
+          example: null
+        next:
+          type: string
+          nullable: true
+          example: null
+
+    PaginationMeta:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        from:
+          type: integer
+          example: 1
+        last_page:
+          type: integer
+          example: 1
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                nullable: true
+                example: null
+              label:
+                type: string
+                example: "&laquo; Previous"
+              active:
+                type: boolean
+                example: false
+        path:
+          type: string
+          example: "http://localhost:8000/api/news"
+        per_page:
+          type: integer
+          example: 5
+        to:
+          type: integer
+          example: 5
+        total:
+          type: integer
+          example: 5
+
+    PaginatedNewsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/News"
+        links:
+          $ref: "#/components/schemas/PaginationLinks"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    AuthenticationError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Unauthenticated."
+        error:
+          type: string
+          example: "Authentication required"
+
+    ResourceNotFoundError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Resource not found."
+
+    ValidationError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "The body field is required. (and 1 more error)"
+        errors:
+          type: object
+          properties:
+            body:
+              type: array
+              items:
+                type: string
+              example: ["The body field is required."]
+            news_id:
+              type: array
+              items:
+                type: string
+              example: ["The news id field is required."]
+
+    CommentResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/Comment"
+
+    SuccessMessage:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Comment deleted successfully"
+
+    AccessDeniedError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Access denied."

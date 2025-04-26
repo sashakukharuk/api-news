@@ -20,12 +20,9 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Дані не відповідають нашим записам.'],
-            ]);
+            return response()->json(['message' => 'The provided credentials are incorrect.'], 401);
         }
 
-        // Створення токена з можливими правами доступу
         return ['token' => $user->createToken($request->device_name)->plainTextToken];
     }
 

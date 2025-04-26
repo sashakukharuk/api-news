@@ -23,13 +23,13 @@ class WebAuthController extends Controller
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['Дані не відповідають нашим записам.'],
+                'email' => ['The provided credentials are incorrect.'],
             ]);
         }
 
         Auth::login($user);
 
-        $response = response()->json(['message' => 'Логін успішний']);
+        $response = response()->json(['message' => 'Login successful']);
 
         $response->withCookie(cookie()->make('XSRF-TOKEN', csrf_token(), 60));
 
@@ -39,7 +39,7 @@ class WebAuthController extends Controller
     public function refreshSession(Request $request)
     {
         if (!Auth::check()) {
-            return response()->json(['message' => 'Користувач не авторизований'], 401);
+            return response()->json(['message' => 'User is not authorized'], 401);
         }
 
         Session::invalidate();
@@ -47,7 +47,7 @@ class WebAuthController extends Controller
         Session::regenerate();
 
         return response()->json([
-            'message' => 'Сесію оновлено успішно',
+            'message' => 'Session updated successfully',
             'user' => $request->user(),
         ]);
     }
@@ -56,7 +56,7 @@ class WebAuthController extends Controller
     {
         Auth::logout();
 
-        $response = response()->json(['message' => 'Вихід успішний']);
+        $response = response()->json(['message' => 'Logout successful']);
 
         $response->withCookie(Cookie::forget('laravel_session'));
 
