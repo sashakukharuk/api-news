@@ -8,6 +8,7 @@ use App\Models\Comment;
 use App\Policies\CommentPolicy;
 use App\Http\Middleware\MultiAuthMiddleware;
 use App\Http\Middleware\CacheResponseMiddleware;
+use App\Http\Middleware\RateLimitMiddleware;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +23,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind('cache.response', function ($app) {
             return new CacheResponseMiddleware();
+        });
+
+        $this->app->bind('rate.limit', function ($app) {
+            return new RateLimitMiddleware();
         });
     }
 
