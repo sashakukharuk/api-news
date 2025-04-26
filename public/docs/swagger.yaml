@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  title: My API
+  title: News API
   version: "1.0.0"
-  description: API for user authentication and profile access
+  description: API for news and comments
 
 paths:
   /api/login:
@@ -326,6 +326,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RateLimitError"
 
   /api/comments/{id}:
     get:
@@ -402,6 +408,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RateLimitError"
     delete:
       summary: Delete a comment
       tags:
@@ -440,6 +452,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ResourceNotFoundError"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RateLimitError"
 
 components:
   securitySchemes:
@@ -717,3 +735,10 @@ components:
         message:
           type: string
           example: "Access denied."
+
+    RateLimitError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Too many requests. Please try again later."
