@@ -17,7 +17,7 @@ Route::middleware('multi.auth')->group(function () {
 });
 
 Route::prefix('news')->controller(NewsController::class)->group(function () {
-    Route::get('', 'index')->name('news.index');   
+    Route::get('', 'index')->name('news.index')->middleware('cache.response');   
     Route::get('{news}', 'show')->name('news.show');
 });
 

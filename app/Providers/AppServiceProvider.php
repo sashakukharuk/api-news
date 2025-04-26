@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\Comment;
 use App\Policies\CommentPolicy;
 use App\Http\Middleware\MultiAuthMiddleware;
+use App\Http\Middleware\CacheResponseMiddleware;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,6 +18,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind('multi.auth', function ($app) {
             return new MultiAuthMiddleware();
+        });
+
+        $this->app->bind('cache.response', function ($app) {
+            return new CacheResponseMiddleware();
         });
     }
 
