@@ -2,37 +2,48 @@
 
 namespace App\Services;
 
-use App\Models\Comment;
+use App\Repositories\CommentRepository;
 use App\Filters\CommentFilter;
 
 class CommentService
 {
     private $limit = 10;
+    private CommentRepository $commentRepository;
+
+    public function __construct(CommentRepository $commentRepository)
+    {
+        $this->commentRepository = $commentRepository;
+    }
 
     public function getComments(CommentFilter $filter)
     {
-        return Comment::with('user')->filter($filter)->paginate($this->limit);
+        return $this->commentRepository->getFilteredWithRelations($filter, $this->limit);
     }
 
     public function getComment($id)
     {
-        return Comment::with('user')->find($id);
+        return $this->commentRepository->findWithRelations($id);
     }
 
     public function storeComment($data)
     {
-        return Comment::create($data);
+        return $this->commentRepository->create($data);
     }
 
-    public function deleteComment(Comment $comment)
+    public function deleteComment($comment)
     {
-        $comment->delete();
+        return $this->commentRepository->delete($comment->id);
     }
 
-    public function updateComment(Comment $comment, $data)  
+    public function updateComment($comment, $data)
     {
-        $comment->update($data);
+        $id = $comment->id;
+        $this->commentRepository->update($id, $data);
+        return $this->commentRepository->findWithRelations($id);
+    }
 
-        return $comment;
+    public function isOwner($commentId, $userId)
+    {
+        return $this->commentRepository->isOwner($commentId, $userId);
     }
 }

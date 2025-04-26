@@ -2,20 +2,25 @@
 
 namespace App\Services;
 
-use App\Models\News;
+use App\Repositories\NewsRepository;
 
 class NewsService
 {
     protected $limit = 5;
+    protected NewsRepository $newsRepository;
+
+    public function __construct(NewsRepository $newsRepository)
+    {
+        $this->newsRepository = $newsRepository;
+    }
 
     public function getNews()
     {
-        return News::orderBy('created_at', 'desc')->paginate($this->limit);
+        return $this->newsRepository->getPaginatedWithUser($this->limit);
     }
-
 
     public function getNewsById($id)
     {
-        return News::find($id);
+        return $this->newsRepository->findWithUser($id);
     }
 }

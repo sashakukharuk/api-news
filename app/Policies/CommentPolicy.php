@@ -2,18 +2,25 @@
 
 namespace App\Policies;
 
-use App\Models\Comment;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\Comment;
+use App\Services\CommentService;
 
 class CommentPolicy
 {
+    private CommentService $commentService;
+
+    public function __construct(CommentService $commentService)
+    {
+        $this->commentService = $commentService;
+    }
+
     /**
      * Determine whether the user can update the model.
      */
     public function update(User $user, Comment $comment): bool
     {
-        return $user->id === $comment->user_id;
+        return $this->commentService->isOwner($comment->id, $user->id);
     }
 
     /**
@@ -21,6 +28,6 @@ class CommentPolicy
      */
     public function delete(User $user, Comment $comment): bool
     {
-        return $user->id === $comment->user_id;
+        return $this->commentService->isOwner($comment->id, $user->id);
     }
 }
