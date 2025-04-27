@@ -22,3 +22,7 @@ composer.lock
 docker-compose.yml
 Dockerfile
 docker
+.npm
+.nvm
+.node_repl_history
+package-lock.json

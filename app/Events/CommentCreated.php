@@ -10,8 +10,9 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Comment;
+use App\Http\Resources\Comment\CommentResource;
 
-class CommentCreated
+class CommentCreated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -26,5 +27,15 @@ class CommentCreated
     public function __construct(Comment $comment)
     {
         $this->comment = $comment;
+    }
+
+    public function broadcastOn()
+    {
+        return new Channel('news.'.$this->comment->news_id);
+    }
+
+    public function broadcastWith()
+    {
+        return CommentResource::make($this->comment)->resolve();
     }
 }

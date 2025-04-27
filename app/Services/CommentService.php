@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Repositories\CommentRepository;
 use App\Filters\CommentFilter;
+use App\Jobs\SendCommentNotification;
+use App\Events\CommentCreated;
 
 class CommentService
 {
@@ -27,7 +29,14 @@ class CommentService
 
     public function storeComment($data)
     {
-        return $this->commentRepository->create($data);
+
+        $comment = $this->commentRepository->create($data);
+
+        SendCommentNotification::dispatch($comment);
+
+        broadcast(new CommentCreated($comment));
+
+        return $comment;
     }
 
     public function deleteComment($comment)
@@ -39,6 +48,7 @@ class CommentService
     {
         $id = $comment->id;
         $this->commentRepository->update($id, $data);
+
         return $this->commentRepository->findWithRelations($id);
     }
 
