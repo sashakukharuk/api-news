@@ -105,6 +105,12 @@ php artisan serve
 php artisan reverb:start
 ```
 
+### Start Queue Worker
+
+```bash
+php artisan queue:work
+```
+
 ### Start Frontend Development Server
 
 ```bash
