@@ -6,6 +6,8 @@ use App\Repositories\CommentRepository;
 use App\Filters\CommentFilter;
 use App\Jobs\SendCommentNotification;
 use App\Events\CommentCreated;
+use Illuminate\Support\Facades\Log;
+use App\Http\Resources\Comment\CommentResource;
 
 class CommentService
 {
@@ -32,9 +34,17 @@ class CommentService
 
         $comment = $this->commentRepository->create($data);
 
-        SendCommentNotification::dispatch($comment);
+        $comment->load('user', 'news.user');
 
-        broadcast(new CommentCreated($comment));
+        try {
+            $commentResource = CommentResource::make($comment)->resolve();
+
+            SendCommentNotification::dispatch($commentResource);
+            broadcast(new CommentCreated($commentResource));
+            
+        } catch (\Exception $e) {
+            report($e);
+        }
 
         return $comment;
     }
