@@ -6,7 +6,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CommentNotification;
-use App\Models\Comment;
 
 class SendCommentNotification implements ShouldQueue
 {
@@ -17,7 +16,7 @@ class SendCommentNotification implements ShouldQueue
      */
     protected $comment;
 
-    public function __construct(Comment $comment)
+    public function __construct($comment)
     {
         $this->comment = $comment;
     }
