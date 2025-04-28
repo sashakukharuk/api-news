@@ -35,7 +35,7 @@ class CommentController extends Controller
     {
         $user_id = Auth::id();
 
-        $news = $this->newsService->getNews($request->news_id);
+        $news = $this->newsService->getNewsById($request->news_id);
         if (!$news) {
             return response()->json(['message' => 'News not found'], 404);
         }
@@ -61,7 +61,7 @@ class CommentController extends Controller
      */
     public function update(UpdateCommentRequest $request, Comment $comment)
     {
-        $news = $this->newsService->getNews($request->news_id);
+        $news = $this->newsService->getNewsById($request->news_id);
         if (!$news) {
             return response()->json(['message' => 'News not found'], 404);
         }
