@@ -5,14 +5,14 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Models\News;
 use App\Models\Comment;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Support\Facades\DB;
 
 class CommentSearchTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseMigrations;
 
     private User $user;
     private News $news;
@@ -35,22 +35,17 @@ class CommentSearchTest extends TestCase
     #[Test]
     public function can_filter_comments_by_body_text()
     {
-        $comment1 = Comment::factory()->create([
+        Comment::factory()->create([
             'user_id' => $this->user->id,
             'news_id' => $this->news->id,
             'body' => 'Test comment with specific text'
         ]);
 
-        $comment2 = Comment::factory()->create([
+       Comment::factory()->create([
             'user_id' => $this->user->id,
             'news_id' => $this->news->id,
             'body' => 'Other comment text'
         ]);
-
-        $comment1->searchable();
-        $comment2->searchable();
-        
-        sleep(1);
 
         $response = $this->getJson('/api/comments?body=specific');
 
@@ -68,31 +63,26 @@ class CommentSearchTest extends TestCase
     #[Test]
     public function can_filter_comments_by_partial_body_text()
     {
-        $comment1 = Comment::factory()->create([
+        Comment::factory()->create([
             'user_id' => $this->user->id,
             'news_id' => $this->news->id,
             'body' => 'First comment about Laravel'
         ]);
 
-        $comment2 = Comment::factory()->create([
+        Comment::factory()->create([
             'user_id' => $this->user->id,
             'news_id' => $this->news->id,
             'body' => 'Second comment about PHP'
         ]);
 
-        $comment3 = Comment::factory()->create([
+        Comment::factory()->create([
             'user_id' => $this->user->id,
             'news_id' => $this->news->id,
             'body' => 'Third comment about JavaScript'
         ]);
 
-        $comment1->searchable();
-        $comment2->searchable();
-        $comment3->searchable();
-        
-        sleep(1);
-
-        $response = $this->getJson('/api/comments?body=about');
+       
+        $response = $this->getJson('/api/comments?body=comment');
 
         $response->assertStatus(200)
             ->assertJsonCount(3, 'data')
@@ -108,22 +98,17 @@ class CommentSearchTest extends TestCase
     #[Test]
     public function returns_empty_result_when_no_matches_found()
     {
-        $comment1 = Comment::factory()->create([
+        Comment::factory()->create([
             'user_id' => $this->user->id,
             'news_id' => $this->news->id,
             'body' => 'First comment'
         ]);
 
-        $comment2 = Comment::factory()->create([
+        Comment::factory()->create([
             'user_id' => $this->user->id,
             'news_id' => $this->news->id,
             'body' => 'Second comment'
         ]);
-
-        $comment1->searchable();
-        $comment2->searchable();
-        
-        sleep(1);
 
         $response = $this->getJson('/api/comments?body=nonexistent');
 
@@ -134,22 +119,17 @@ class CommentSearchTest extends TestCase
     #[Test]
     public function can_filter_comments_by_case_insensitive_body_text()
     {
-        $comment1 = Comment::factory()->create([
+        Comment::factory()->create([
             'user_id' => $this->user->id,
             'news_id' => $this->news->id,
             'body' => 'LARAVEL is awesome'
         ]);
 
-        $comment2 = Comment::factory()->create([
+        Comment::factory()->create([
             'user_id' => $this->user->id,
             'news_id' => $this->news->id,
             'body' => 'PHP is great'
         ]);
-
-        $comment1->searchable();
-        $comment2->searchable();
-        
-        sleep(1);
 
         $response = $this->getJson('/api/comments?body=laravel');
 
