@@ -24,17 +24,12 @@ class CommentRepository extends BaseRepository
         $query = $this->model->newQuery();
         $filter->apply($query);
         
-        return $query->with(['user', 'news'])->paginate($perPage);
-    }
-
-    public function getPaginatedWithRelations(int $perPage = 10): LengthAwarePaginator
-    {
-        return $this->withPaginate(['user', 'news'], $perPage);
+        return $query->with(['user'])->paginate($perPage);
     }
 
     public function findWithRelations(int $id): ?Comment
     {
-        return $this->findWith($id, ['user', 'news']);
+        return $this->findWith($id, ['user', 'news.user']);
     }
 
     public function isOwner(int $commentId, int $userId): bool
