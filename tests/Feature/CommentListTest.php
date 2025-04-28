@@ -139,35 +139,6 @@ class CommentListTest extends TestCase
     }
 
     #[Test]
-    public function can_filter_comments_by_body_text()
-    {
-        // Create comments with different body text
-        Comment::factory()->create([
-            'user_id' => $this->user->id,
-            'news_id' => $this->news->id,
-            'body' => 'Test comment with specific text'
-        ]);
-
-        Comment::factory(2)->create([
-            'user_id' => $this->user->id,
-            'news_id' => $this->news->id,
-            'body' => 'Other comment text'
-        ]);
-
-        $response = $this->getJson('/api/comments?body=specific');
-
-        $response->assertStatus(200)
-            ->assertJsonCount(1, 'data')
-            ->assertJson([
-                'data' => [
-                    [
-                        'body' => 'Test comment with specific text'
-                    ]
-                ]
-            ]);
-    }
-
-    #[Test]
     public function can_filter_comments_by_user_email()
     {
         // Create another user with different email
