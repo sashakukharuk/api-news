@@ -29,24 +29,24 @@ class CommentService
         return $this->commentRepository->findWithRelations($id);
     }
 
-    public function storeComment($data)
+    public function storeComment(array $data): \App\Models\Comment
     {
 
         $comment = $this->commentRepository->create($data);
 
-        $comment->load('user', 'news.user');
-
-        try {
-            $commentResource = CommentResource::make($comment)->resolve();
-
-            SendCommentNotification::dispatch($commentResource);
-            broadcast(new CommentCreated($commentResource));
-            
-        } catch (\Exception $e) {
-            report($e);
-        }
+        $this->notifyAboutComment($comment);
 
         return $comment;
+    }
+
+    private function notifyAboutComment($comment): void
+    {
+        try {
+            SendCommentNotification::dispatch($comment);
+            broadcast(new CommentCreated($comment));
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 
     public function deleteComment($comment)
