@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Core;
 
 use App\Repositories\CommentRepository;
 use App\Filters\CommentFilter;
@@ -8,8 +8,9 @@ use App\Jobs\SendCommentNotification;
 use App\Events\CommentCreated;
 use Illuminate\Support\Facades\Log;
 use App\Http\Resources\Comment\CommentResource;
+use App\Services\Contracts\CommentServiceInterface;
 
-class CommentService
+class CommentService implements CommentServiceInterface
 {
     private $limit = 10;
     private CommentRepository $commentRepository;

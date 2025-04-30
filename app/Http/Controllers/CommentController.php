@@ -9,16 +9,16 @@ use App\Http\Requests\DeleteCommentRequest;
 use App\Models\Comment;
 use App\Http\Resources\Comment\CommentCollection;
 use App\Http\Resources\Comment\CommentResource;
-use App\Services\CommentService;
-use App\Services\NewsService;
 use App\Filters\CommentFilter;
 use Illuminate\Support\Facades\Log;
+use App\Services\Contracts\CommentServiceInterface;
+use App\Services\Contracts\NewsServiceInterface;
 
 class CommentController extends Controller
 {
     public function __construct(
-        protected CommentService $commentService,
-        protected NewsService $newsService
+        protected CommentServiceInterface $commentService,
+        protected NewsServiceInterface $newsService
     ) {}
 
     /**

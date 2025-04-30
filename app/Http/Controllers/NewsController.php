@@ -6,15 +6,15 @@ use App\Http\Requests\StoreNewsRequest;
 use App\Http\Requests\UpdateNewsRequest;
 use App\Models\News;
 use Illuminate\Routing\Controller;
-use App\Services\NewsService;
 use App\Http\Resources\News\NewsCollection;
 use App\Http\Resources\News\NewsResource;
 use Illuminate\Support\Facades\Log;
+use App\Services\Contracts\NewsServiceInterface;
 
 class NewsController extends Controller
 {
 
-    public function __construct(protected NewsService $newsService) {}
+    public function __construct(protected NewsServiceInterface $newsService) {}
 
     /**
      * Display a listing of the resource.

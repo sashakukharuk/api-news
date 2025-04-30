@@ -4,13 +4,13 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\Comment;
-use App\Services\CommentService;
+use App\Services\Contracts\CommentServiceInterface;
 
 class CommentPolicy
 {
-    private CommentService $commentService;
+    private CommentServiceInterface $commentService;
 
-    public function __construct(CommentService $commentService)
+    public function __construct(CommentServiceInterface $commentService)
     {
         $this->commentService = $commentService;
     }

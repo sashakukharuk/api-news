@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Services;
-
+namespace App\Services\Core;
+    
 use App\Repositories\NewsRepository;
+use App\Services\Contracts\NewsServiceInterface;
 
-class NewsService
+class NewsService implements NewsServiceInterface
 {
     protected $limit = 5;
     protected NewsRepository $newsRepository;
