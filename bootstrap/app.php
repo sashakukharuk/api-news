@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\LogRequestMiddleware;
 use Illuminate\Support\Facades\Log;
 use App\Http\Middleware\HandleHttpErrors;
+use Sentry\State\HubInterface;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -20,8 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->report(function (Throwable $e) {
-            if (app()->bound(\Sentry\State\HubInterface::class)) {
-                $eventId = app(\Sentry\State\HubInterface::class)->captureException($e);
+            if (app()->bound(HubInterface::class)) {
+                $eventId = app(HubInterface::class)->captureException($e);
             } else {
                 $eventId = null;
             }
