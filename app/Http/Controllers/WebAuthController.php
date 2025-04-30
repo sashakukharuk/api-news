@@ -9,19 +9,18 @@ use Illuminate\Support\Facades\Session;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Http\Requests\Auth\WebLoginResource;    
+
 
 class WebAuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(WebLoginResource $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        $data = $request->validated();
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $data['email'])->first();
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($data['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
