@@ -9,6 +9,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+
 
 class UpdateNewsStatusJob implements ShouldQueue
 {
@@ -27,10 +29,14 @@ class UpdateNewsStatusJob implements ShouldQueue
      */
     public function handle(): void
     {
+        Log::info('Start Job:UpdateNewsStatusJob');
+
         $twoDaysAgo = Carbon::now()->subDays(2);
 
         News::where('is_new', true)
             ->where('created_at', '<', $twoDaysAgo)
             ->update(['is_new' => false]);
+
+        Log::info('End Job:UpdateNewsStatusJob');
     }
 } 

@@ -12,6 +12,7 @@ use App\Http\Resources\Comment\CommentResource;
 use App\Services\CommentService;
 use App\Services\NewsService;
 use App\Filters\CommentFilter;
+use Illuminate\Support\Facades\Log;
 
 class CommentController extends Controller
 {
@@ -25,7 +26,15 @@ class CommentController extends Controller
      */
     public function index(CommentFilter $filter)
     {
-        return CommentCollection::make($this->commentService->getComments($filter));
+        Log::info('Start Controller:CommentController.index', ['user_id' => auth()->id(), 'query' => request()->query()]);
+
+        $comments = $this->commentService->getComments($filter);
+
+        $result = CommentCollection::make($comments);
+
+        Log::info('End Controller:CommentController.index', ['length' => $result->count()]);
+
+        return $result;
     }
 
     /**
@@ -34,6 +43,8 @@ class CommentController extends Controller
     public function store(StoreCommentRequest $request)
     {
         $user_id = Auth::id();
+
+        Log::info('Start Controller:CommentController.store', ['user_id' => $user_id, 'request' => $request->all()]);
 
         $news = $this->newsService->getNewsById($request->news_id);
         if (!$news) {
@@ -45,7 +56,11 @@ class CommentController extends Controller
 
         $comment = $this->commentService->storeComment($data);
 
-        return CommentResource::make($comment);
+        $result = CommentResource::make($comment);
+
+        Log::info('End Controller:CommentController.store', ['result' => $result]);       
+
+        return $result; 
     }
 
     /**
@@ -53,14 +68,22 @@ class CommentController extends Controller
      */
     public function show(Comment $comment)
     {
-        return CommentResource::make($comment);
+        Log::info('Start Controller:CommentController.show', ['comment' => $comment]);
+
+        $result = CommentResource::make($comment);
+
+        Log::info('End Controller:CommentController.show', ['result' => $result]);
+
+        return $result;
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateCommentRequest $request, Comment $comment)
-    {
+    {   
+        Log::info('Start Controller:CommentController.update', ['user_id' => auth()->id(), 'comment' => $comment, 'request' => $request->all()]);
+
         $news = $this->newsService->getNewsById($request->news_id);
         if (!$news) {
             return response()->json(['message' => 'News not found'], 404);
@@ -70,7 +93,11 @@ class CommentController extends Controller
 
         $comment = $this->commentService->updateComment($comment, $data);
 
-        return CommentResource::make($comment);
+        $result = CommentResource::make($comment);
+
+        Log::info('End Controller:CommentController.update', ['result' => $result]);
+
+        return $result;
     }
 
     /**
@@ -78,7 +105,11 @@ class CommentController extends Controller
      */
     public function destroy(DeleteCommentRequest $request, Comment $comment)
     {
+        Log::info('Start Controller:CommentController.destroy', ['user_id' => auth()->id(), 'comment' => $comment]);
+
         $this->commentService->deleteComment($comment);
+
+        Log::info('End Controller:CommentController.destroy', ['user_id' => auth()->id(), 'comment' => $comment]);
 
         return response()->json(['message' => 'Comment deleted successfully']);
     }

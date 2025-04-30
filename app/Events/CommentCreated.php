@@ -11,6 +11,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Comment;
 use App\Http\Resources\Comment\CommentResource;
+use Illuminate\Support\Facades\Log;
 
 class CommentCreated implements ShouldBroadcast
 {
@@ -31,6 +32,7 @@ class CommentCreated implements ShouldBroadcast
 
     public function broadcastOn()
     {
+        Log::info('Event:CommentCreated', $this->comment->toArray());
         return new Channel('news.'.$this->comment->news_id);
     }
 

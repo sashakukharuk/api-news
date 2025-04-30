@@ -9,6 +9,7 @@ use Illuminate\Routing\Controller;
 use App\Services\NewsService;
 use App\Http\Resources\News\NewsCollection;
 use App\Http\Resources\News\NewsResource;
+use Illuminate\Support\Facades\Log;
 
 class NewsController extends Controller
 {
@@ -20,7 +21,15 @@ class NewsController extends Controller
      */
     public function index()
     {
-        return NewsCollection::make($this->newsService->getNews());
+        Log::info('Start Controller:NewsController.index', ['user_id' => auth()->id(), 'query' => request()->query()]);
+
+        $news = $this->newsService->getNews();
+
+        $result = NewsCollection::make($news);
+
+        Log::info('End Controller:NewsController.index', ['length' => $result->count()]);
+
+        return $result;
     }
 
     /**
@@ -28,6 +37,12 @@ class NewsController extends Controller
      */
     public function show(News $news)
     {
-        return NewsResource::make($news);
+        Log::info('Start Controller:NewsController.show', ['news' => $news]);
+
+        $result = NewsResource::make($news);
+
+        Log::info('End Controller:NewsController.show', ['news' => $news]);
+
+        return $result;
     }
 }

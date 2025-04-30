@@ -29,13 +29,12 @@ class CommentCreatedHandler
     public function handle(CommentCreated $event)
     {
 
-        Log::info('Нова подія: створений коментар', [
-            'comment_id' => $event->comment->id,
-            'user_id' => $event->comment->user_id,
-            'body' => $event->comment->body,
-        ]);
+        Log::info('Start Listener:CommentCreatedHandler', $event->comment->toArray());
 
         Mail::to(config('mail.moderator_email', 'moderator@example.com'))->send(new CommentNotification($event->comment));
+
+        Log::info('End Listener:CommentCreatedHandler', $event->comment->toArray());
+
     }
 
 }
