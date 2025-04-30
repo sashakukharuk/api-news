@@ -13,9 +13,9 @@ class AuthController extends Controller
 {
     public function login(LoginRequest $request)
     {
-        Log::info('Start Controller:AuthController.login', $request->all());
-
         $data = $request->validated();
+
+        Log::info('Start Controller:AuthController.login', ['email' => $data['email'], 'device_name' => $data['device_name']]);
 
         $user = User::where('email', $data['email'])->first();
 
@@ -27,12 +27,10 @@ class AuthController extends Controller
 
             return response()->json($result, 401);
         }
+      
+        Log::info('End Controller:AuthController.login', ['email' => $data['email'], 'device_name' => $data['device_name']]);
 
-        $result = ['token' => $user->createToken($data['device_name'])->plainTextToken];
-        
-        Log::info('End Controller:AuthController.login', $result);
-
-        return $result;
+        return ['token' => $user->createToken($data['device_name'])->plainTextToken];
     }
 
     public function logout(Request $request)
