@@ -14,15 +14,24 @@ class LoggingNewsServiceDecorator implements NewsServiceInterface
         $this->service = $service;
     }
 
+    public function __call(string $method, array $arguments)
+    {
+        Log::info("Start Service:NewsService.{$method}", ['arguments' => $arguments]);
+
+        $result = call_user_func_array([$this->service, $method], $arguments);
+
+        Log::info("End Service:NewsService.{$method}", ['result' => $result]);  
+
+        return $result;
+    }
+
     public function getNews()
     {
-        Log::info('NewsService:getNews');
-        return $this->service->getNews();
+        return $this->__call(__FUNCTION__, []);
     }
 
     public function getNewsById($id)
     {
-        Log::info('NewsService:getNewsById', ['id' => $id]);
-        return $this->service->getNewsById($id);
+        return $this->__call(__FUNCTION__, [$id]);
     }
 } 

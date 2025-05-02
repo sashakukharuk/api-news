@@ -27,7 +27,7 @@ class NewsController extends Controller
 
         $result = NewsCollection::make($news);
 
-        Log::info('End Controller:NewsController.index', ['length' => $result->count()]);
+        Log::info('End Controller:NewsController.index', ['news' => $result]);
 
         return $result;
     }

@@ -18,39 +18,44 @@ class LoggingCommentRepositoryDecorator implements CommentRepositoryInterface
         $this->repository = $repository;
     }
 
+    public function __call(string $method, array $arguments)
+    {
+        Log::info("Start Repository:CommentRepository.{$method}", ['arguments' => $arguments]);
+
+        $result = call_user_func_array([$this->repository, $method], $arguments);   
+
+        Log::info("End Repository:CommentRepository.{$method}", ['result' => $result]);
+
+        return $result;
+    }
+
     public function getFilteredWithRelations(CommentFilter $filter, int $perPage = 10): LengthAwarePaginator
     {
-        Log::info('CommentRepository:getFilteredWithRelations', ['filter' => $filter, 'perPage' => $perPage]);
-        return $this->repository->getFilteredWithRelations($filter, $perPage);
+        return $this->__call(__FUNCTION__, [$filter, $perPage]);
     }
 
     public function findWithRelations(int $id): ?Model
     {
-        Log::info('CommentRepository:findWithRelations', ['id' => $id]);
-        return $this->repository->findWithRelations($id);
+        return $this->__call(__FUNCTION__, [$id]);
     }
 
     public function isOwner(int $commentId, int $userId): bool
     {
-        Log::info('CommentRepository:isOwner', ['commentId' => $commentId, 'userId' => $userId]);
-        return $this->repository->isOwner($commentId, $userId);
+        return $this->__call(__FUNCTION__, [$commentId, $userId]);
     }
 
     public function create(array $data): Model
     {
-        Log::info('CommentRepository:create', ['data' => $data]);
-        return $this->repository->create($data);
+        return $this->__call(__FUNCTION__, [$data]);
     }
 
     public function update(int $id, array $data): bool
     {
-        Log::info('CommentRepository:update', ['id' => $id, 'data' => $data]);
-        return $this->repository->update($id, $data);
+        return $this->__call(__FUNCTION__, [$id, $data]);
     }
 
     public function delete(int $id): bool
     {
-        Log::info('CommentRepository:delete', ['id' => $id]);
-        return $this->repository->delete($id);
+        return $this->__call(__FUNCTION__, [$id]);
     }
 } 

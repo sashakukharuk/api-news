@@ -17,15 +17,24 @@ class LoggingNewsRepositoryDecorator implements NewsRepositoryInterface
         $this->repository = $repository;
     }
 
+    public function __call(string $method, array $arguments)
+    {
+        Log::info("Start Repository:NewsRepository.{$method}", ['arguments' => $arguments]);
+
+        $result = call_user_func_array([$this->repository, $method], $arguments);   
+
+        Log::info("End Repository:NewsRepository.{$method}", ['result' => $result]);
+
+        return $result;
+    }   
+
     public function getPaginatedWithUser(int $perPage = 10): LengthAwarePaginator
     {
-        Log::info('NewsRepository:getPaginatedWithUser', ['perPage' => $perPage]);
-        return $this->repository->getPaginatedWithUser($perPage);
+        return $this->__call(__FUNCTION__, [$perPage]);
     }
 
     public function findWithUser(int $id): ?Model
     {
-        Log::info('NewsRepository:findWithUser', ['id' => $id]);
-        return $this->repository->findWithUser($id);
+        return $this->__call(__FUNCTION__, [$id]);
     }
 } 

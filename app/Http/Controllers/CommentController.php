@@ -32,7 +32,7 @@ class CommentController extends Controller
 
         $result = CommentCollection::make($comments);
 
-        Log::info('End Controller:CommentController.index', ['length' => $result->count()]);
+        Log::info('End Controller:CommentController.index', ['result' => $result]);
 
         return $result;
     }
@@ -48,6 +48,7 @@ class CommentController extends Controller
 
         $news = $this->newsService->getNewsById($request->news_id);
         if (!$news) {
+            Log::info('End Controller:CommentController.store', ['result' => ['message' => 'News not found'], 404]);
             return response()->json(['message' => 'News not found'], 404);
         }
 
