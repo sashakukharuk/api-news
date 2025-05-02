@@ -2,20 +2,20 @@
 
 namespace App\Services\Core;
 
-use App\Repositories\CommentRepository;
 use App\Filters\CommentFilter;
 use App\Jobs\SendCommentNotification;
 use App\Events\CommentCreated;
 use Illuminate\Support\Facades\Log;
 use App\Http\Resources\Comment\CommentResource;
 use App\Services\Contracts\CommentServiceInterface;
+use App\Repositories\Contracts\CommentRepositoryInterface;
 
 class CommentService implements CommentServiceInterface
 {
     private $limit = 10;
-    private CommentRepository $commentRepository;
+    private CommentRepositoryInterface $commentRepository;
 
-    public function __construct(CommentRepository $commentRepository)
+    public function __construct(CommentRepositoryInterface $commentRepository)
     {
         $this->commentRepository = $commentRepository;
     }

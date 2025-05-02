@@ -2,15 +2,15 @@
 
 namespace App\Services\Core;
     
-use App\Repositories\NewsRepository;
+use App\Repositories\Contracts\NewsRepositoryInterface;
 use App\Services\Contracts\NewsServiceInterface;
 
 class NewsService implements NewsServiceInterface
 {
     protected $limit = 5;
-    protected NewsRepository $newsRepository;
+    protected NewsRepositoryInterface $newsRepository;
 
-    public function __construct(NewsRepository $newsRepository)
+    public function __construct(NewsRepositoryInterface $newsRepository)
     {
         $this->newsRepository = $newsRepository;
     }

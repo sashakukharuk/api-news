@@ -1,22 +1,23 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Core;
 
 use App\Models\Comment;
 use App\Filters\CommentFilter;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Repositories\Contracts\CommentRepositoryInterface;
 
-class CommentRepository extends BaseRepository
+class CommentRepository implements CommentRepositoryInterface            
 {
+    protected Comment $model;   
     /**
      * CommentRepository constructor.
      *
      * @param Comment $model
-     */
+     */     
     public function __construct(Comment $model)
     {
-        parent::__construct($model);
+        $this->model = $model;
     }
 
     public function getFilteredWithRelations(CommentFilter $filter, int $perPage = 10): LengthAwarePaginator
@@ -29,7 +30,7 @@ class CommentRepository extends BaseRepository
 
     public function findWithRelations(int $id): ?Comment
     {
-        return $this->findWith($id, ['user', 'news.user']);
+        return $this->model->with(['user', 'news.user'])->find($id);
     }
 
     public function isOwner(int $commentId, int $userId): bool
@@ -37,5 +38,20 @@ class CommentRepository extends BaseRepository
         return $this->model->where('id', $commentId)
             ->where('user_id', $userId)
             ->exists();
+    }
+
+    public function create(array $data): Comment
+    {
+        return $this->model->create($data);
+    }
+
+    public function update(int $id, array $data): bool
+    {
+        return $this->model->where('id', $id)->update($data);
+    }
+
+    public function delete(int $id): bool
+    {
+        return $this->model->destroy($id);
     }
 } 
