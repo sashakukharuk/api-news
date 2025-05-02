@@ -4,6 +4,7 @@ use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
+use App\Logging\CustomLogTap;               
 
 return [
 
@@ -56,6 +57,7 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/debug.log'),
             'level' => 'debug',
+            'tap' => [CustomLogTap::class],
         ],
 
         'error_file' => [
@@ -68,6 +70,7 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/info.log'),
             'level' => 'info',
+            'tap' => [CustomLogTap::class],
         ],
 
         'warning_file' => [
